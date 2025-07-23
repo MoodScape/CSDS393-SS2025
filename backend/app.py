@@ -120,7 +120,7 @@ def login():
         }), 200
         
     except Exception as e:
-        logger.error(f"Login error for username '{username}': {str(e)}", exc_info=True)
+        logger.error(f"Login error: {str(e)}", exc_info=True)
         return jsonify({'error': 'Internal server error'}), 500
 
 # Error handlers

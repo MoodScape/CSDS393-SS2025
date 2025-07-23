@@ -15,8 +15,8 @@ function App() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    const storedUser = localStorage.getItem('user');
+    const token = sessionStorage.getItem('access_token');
+    const storedUser = sessionStorage.getItem('user');
     
     if (token && storedUser) {
       try {
@@ -24,8 +24,8 @@ function App() {
         setUser(parsedUser);
         setIsAuthenticated(true);
       } catch (error) {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('user');
+        sessionStorage.removeItem('access_token');
+        sessionStorage.removeItem('user');
       }
     }
     
@@ -38,8 +38,8 @@ function App() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('access_token');
+    sessionStorage.removeItem('user');
     setUser(null);
     setIsAuthenticated(false);
   };
