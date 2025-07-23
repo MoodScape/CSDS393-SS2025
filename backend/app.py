@@ -1,13 +1,14 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
-from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
+from mongoengine import connect
 from dotenv import load_dotenv
 import os
 import bcrypt
 from datetime import datetime, timedelta, timezone
 from config import config
+
+from models import User, SongLog
 
 # Load environment variables
 load_dotenv()
@@ -23,31 +24,16 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
 CORS(app)
 jwt = JWTManager(app)
 
-# MongoDB connection
+# MongoDB connection using MongoEngine
 try:
-    # Get configuration based on environment
     config_name = os.getenv('FLASK_ENV', 'development')
-    config = config[config_name]
-    
-    mongo_uri = config.MONGODB_URI
-    database_name = config.DATABASE_NAME
-    
-    # Replace placeholder with actual password
-    if '<db_password>' in mongo_uri:
-        db_password = os.getenv('MONGODB_PASSWORD', 'password')
-        mongo_uri = mongo_uri.replace('<db_password>', db_password)
-    
-    # Create a new client and connect to the server with ServerApi
-    client = MongoClient(mongo_uri, server_api=ServerApi('1'))
-    
-    # Send a ping to confirm a successful connection
-    client.admin.command('ping')
-    db = client[database_name]
-    print(f"MongoDB connected successfully to database: {database_name}")
-    print("Pinged your deployment. You successfully connected to MongoDB!")
+    config_obj = config[config_name]
+    mongo_uri = config_obj.MONGODB_URI
+    database_name = config_obj.DATABASE_NAME
+    connect(db=database_name, host=mongo_uri)
+    print(f"MongoEngine connected successfully to database: {database_name}")
 except Exception as e:
-    print(f"MongoDB connection failed: {e}")
-    db = None
+    print(f"MongoEngine connection failed: {e}")
 
 # Health check endpoint
 @app.route('/api/health', methods=['GET'])
@@ -55,12 +41,9 @@ def health_check():
     """Health check endpoint for deployment verification"""
     try:
         # Test MongoDB connection
-        if db is not None:
-            db.command('ping')
-            db_status = "connected"
-        else:
-            db_status = "disconnected"
-        
+        val = User.objects.first()  # Try a simple query
+        print(val)
+        db_status = "connected"
         return jsonify({
             'status': 'healthy',
             'timestamp': datetime.now(timezone.utc).isoformat(),

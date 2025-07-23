@@ -1,7 +1,9 @@
-Flask==3.1.1
+Flask==2.3.3
 Flask-CORS==6.0.1
 PyMongo[srv]==4.13.2
 python-dotenv==1.1.1
 bcrypt==4.3.0
 Flask-JWT-Extended==4.7.1
-gunicorn==21.2.0 
+gunicorn==21.2.0
+mongoengine==0.29.1
+Werkzeug==2.3.8
