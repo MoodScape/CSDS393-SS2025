@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, create_access_token
 from mongoengine import connect
 from dotenv import load_dotenv
 import os
@@ -68,6 +68,47 @@ def echo():
         'received_data': data,
         'timestamp': datetime.now(timezone.utc).isoformat()
     }), 200
+
+# Login endpoint
+@app.route('/api/login', methods=['POST'])
+def login():
+    """User login endpoint with JWT token generation"""
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+        
+        username = data.get('username')
+        password = data.get('password')
+        
+        if not username or not password:
+            return jsonify({'error': 'Username and password are required'}), 400
+        
+        # Find user by username
+        user = User.objects(username=username).first()
+        if not user:
+            return jsonify({'error': 'Invalid credentials'}), 401
+        
+        # Verify password
+        if not bcrypt.checkpw(password.encode('utf-8'), user.password_hash.encode('utf-8')):
+            return jsonify({'error': 'Invalid credentials'}), 401
+        
+        # Create JWT token
+        access_token = create_access_token(identity=user.user_id)
+        
+        return jsonify({
+            'message': 'Login successful',
+            'access_token': access_token,
+            'user': {
+                'id': user.user_id,
+                'username': user.username,
+                'bio': user.bio
+            }
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': 'Internal server error'}), 500
 
 # Error handlers
 @app.errorhandler(404)
