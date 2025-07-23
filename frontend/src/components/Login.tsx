@@ -7,18 +7,20 @@ interface LoginFormData {
   password: string;
 }
 
+interface User {
+  id: string;
+  username: string;
+  bio?: string;
+}
+
 interface LoginResponse {
   message: string;
   access_token: string;
-  user: {
-    id: string;
-    username: string;
-    bio?: string;
-  };
+  user: User;
 }
 
 interface LoginProps {
-  onLoginSuccess: (token: string, user: any) => void;
+  onLoginSuccess: (token: string, user: User) => void;
 }
 
 const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
@@ -66,15 +68,15 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
       const { access_token, user } = response.data;
       
-      // Store token in localStorage
-      localStorage.setItem('access_token', access_token);
-      localStorage.setItem('user', JSON.stringify(user));
+      // Store token in sessionStorage (more secure than localStorage)
+      sessionStorage.setItem('access_token', access_token);
+      sessionStorage.setItem('user', JSON.stringify(user));
       
       // Call success callback
       onLoginSuccess(access_token, user);
       
-    } catch (err: any) {
-      if (err.response?.data?.error) {
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err) && err.response?.data?.error) {
         setError(err.response.data.error);
       } else {
         setError('Login failed. Please try again.');
