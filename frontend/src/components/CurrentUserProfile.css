@@ -1,0 +1,392 @@
+.current-user-profile {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.profile-loading,
+.profile-error {
+  text-align: center;
+  padding: 4rem;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.profile-error {
+  color: #dc3545;
+}
+
+.profile-header {
+  display: flex;
+  gap: 3rem;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.profile-avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.profile-avatar img,
+.avatar-placeholder {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  background-color: #007bff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  font-weight: bold;
+}
+
+.change-avatar-btn {
+  padding: 0.5rem 1rem;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.change-avatar-btn:hover {
+  background-color: #e9ecef;
+}
+
+.profile-info {
+  flex-grow: 1;
+}
+
+.profile-info h1 {
+  margin: 0 0 1rem 0;
+  font-size: 2rem;
+}
+
+.profile-stats {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-count {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.bio-section {
+  margin-top: 1.5rem;
+}
+
+.bio-edit textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.bio-edit-actions {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.bio-edit-actions button {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.bio-edit-actions button:first-child {
+  background-color: #007bff;
+  color: white;
+}
+
+.bio-edit-actions button:last-child {
+  background-color: #6c757d;
+  color: white;
+}
+
+.bio-display p {
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.edit-bio-btn {
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  background-color: transparent;
+  border: 1px solid #007bff;
+  color: #007bff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.edit-bio-btn:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Mood Summary Section */
+.mood-summary-section {
+  margin-bottom: 2rem;
+}
+
+.mood-summary-section h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.mood-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.mood-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #f8f9fa;
+  border-radius: 20px;
+  border: 1px solid #e9ecef;
+}
+
+.mood-emoji {
+  font-size: 1.5rem;
+}
+
+.mood-name {
+  font-weight: 500;
+}
+
+.mood-count {
+  background-color: #007bff;
+  color: white;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+}
+
+/* Top Artists Section */
+.top-artists-section {
+  margin-bottom: 2rem;
+}
+
+.top-artists-section h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.artists-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.artist-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.artist-rank {
+  font-weight: bold;
+  color: #007bff;
+  margin-right: 1rem;
+  width: 30px;
+}
+
+.artist-name {
+  flex-grow: 1;
+  font-weight: 500;
+}
+
+.artist-count {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Playlists Section */
+.playlists-section {
+  margin-top: 3rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.playlist-counts {
+  display: flex;
+  gap: 1rem;
+}
+
+.count-badge {
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.count-badge.public {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.count-badge.private {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.no-playlists {
+  text-align: center;
+  color: #666;
+  padding: 2rem;
+}
+
+.playlists-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.playlist-card {
+  padding: 1.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: white;
+  transition: box-shadow 0.3s ease;
+}
+
+.playlist-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.playlist-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.playlist-card h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.privacy-badge {
+  font-size: 0.85rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+}
+
+.privacy-badge.public {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.privacy-badge.private {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.playlist-description {
+  color: #666;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.playlist-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 1rem;
+}
+
+.playlist-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.playlist-actions button {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.view-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.edit-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .profile-stats {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .playlists-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mood-badges {
+    justify-content: center;
+  }
+}
