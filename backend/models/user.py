@@ -18,4 +18,8 @@ class User(Document):
             'followers',
             'following'
         ]
-    } 
+    }
+    
+    @property
+    def user_id(self):
+        return str(self.id) 
