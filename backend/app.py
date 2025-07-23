@@ -9,6 +9,7 @@ from datetime import datetime, timedelta, timezone
 from config import config
 
 from models import User, SongLog
+from routes.song_log import song_log_bp
 
 # Load environment variables
 load_dotenv()
@@ -23,6 +24,9 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
 # Initialize extensions
 CORS(app)
 jwt = JWTManager(app)
+
+# Register blueprints
+app.register_blueprint(song_log_bp)
 
 # MongoDB connection using MongoEngine
 try:
