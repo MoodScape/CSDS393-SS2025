@@ -3,24 +3,24 @@ import axios from 'axios';
 import './LogSongForm.css';
 
 const LogSongForm = () => {
-  // ????
+  // Form data state
   const [formData, setFormData] = useState({
     song_title: '',
     artist: '',
     mood: '',
   });
   
-  // ??????
+  // Submission status management
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState({
     success: false,
     message: '',
   });
   
-  // ????????(???)
+  // Mood options (fixed)
   const moods = ['Happy', 'Sad', 'Energetic', 'Calm'];
 
-  // ??????
+  // Handle form changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -29,46 +29,46 @@ const LogSongForm = () => {
     }));
   };
 
-  // ????
+  // Form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus({ success: false, message: '' });
     
-    // ????
+    // Validate form
     if (!formData.song_title || !formData.artist || !formData.mood) {
       setSubmitStatus({
         success: false,
-        message: '?????????',
+        message: 'All fields are required',
       });
       setIsSubmitting(false);
       return;
     }
 
     try {
-      // ???????
+      // Send to backend API
       const response = await axios.post(
         'http://localhost:3001/api/song/log',
         formData
       );
 
-      // ????
+      // Success handling
       setSubmitStatus({
         success: true,
-        message: '????!??????????',
+        message: 'Success! Your song and mood have been recorded',
       });
       
-      // ????
+      // Reset form
       setFormData({
         song_title: '',
         artist: '',
         mood: '',
       });
     } catch (error) {
-      // ????
+      // Error handling
       setSubmitStatus({
         success: false,
-        message: ????: ,
+        message: `Error: ${error.response?.data?.message || error.message}`,
       });
     } finally {
       setIsSubmitting(false);
@@ -77,36 +77,36 @@ const LogSongForm = () => {
 
   return (
     <div className='log-song-form-container'>
-      <h2>???????</h2>
+      <h2>Log Song and Mood</h2>
       <form onSubmit={handleSubmit} className='log-song-form'>
         <div className='form-group'>
-          <label htmlFor='song_title'>???? *</label>
+          <label htmlFor='song_title'>Song Title *</label>
           <input
             type='text'
             id='song_title'
             name='song_title'
             value={formData.song_title}
             onChange={handleChange}
-            placeholder='??????'
+            placeholder='Enter song title'
             required
           />
         </div>
 
         <div className='form-group'>
-          <label htmlFor='artist'>??/??? *</label>
+          <label htmlFor='artist'>Artist/Singer *</label>
           <input
             type='text'
             id='artist'
             name='artist'
             value={formData.artist}
             onChange={handleChange}
-            placeholder='??????????'
+            placeholder='Enter artist or singer name'
             required
           />
         </div>
 
         <div className='form-group'>
-          <label htmlFor='mood'>???? *</label>
+          <label htmlFor='mood'>Current Mood *</label>
           <select
             id='mood'
             name='mood'
@@ -114,7 +114,7 @@ const LogSongForm = () => {
             onChange={handleChange}
             required
           >
-            <option value=''>????</option>
+            <option value=''>Select mood</option>
             {moods.map((mood) => (
               <option key={mood} value={mood}>
                 {mood}
@@ -128,11 +128,11 @@ const LogSongForm = () => {
           className='submit-btn'
           disabled={isSubmitting}
         >
-          {isSubmitting ? '???...' : '???????'}
+          {isSubmitting ? 'Submitting...' : 'Record Song and Mood'}
         </button>
 
         {submitStatus.message && (
-          <div className={status-message }>
+          <div className={`status-message ${submitStatus.success ? 'success' : 'error'}`}>
             {submitStatus.message}
           </div>
         )}

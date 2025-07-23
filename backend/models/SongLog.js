@@ -16,14 +16,14 @@ const songLogSchema = new mongoose.Schema({
   mood: {
     type: String,
     required: true,
-    enum: ["Happy", "Sad", "Energetic", "Calm"] // 仅允许这些固定值
+    enum: ["Happy", "Sad", "Energetic", "Calm"] // Only allow these fixed values
   },
   timestamp: {
     type: Date,
     default: Date.now
   }
 }, {
-  timestamps: true // 自动添加 createdAt 和 updatedAt
+  timestamps: true // Automatically add createdAt and updatedAt
 });
 
 const SongLog = mongoose.model("SongLog", songLogSchema);

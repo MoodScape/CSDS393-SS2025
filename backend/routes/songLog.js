@@ -4,50 +4,50 @@ const SongLog = require('../models/SongLog');
 
 /**
  * @route   POST api/song/log
- * @desc    记录用户的歌曲和心情
- * @access  Private (但在当前实现中暂不处理身份验证)
+ * @desc    Log user's song and mood
+ * @access  Private (but authentication not implemented yet)
  */
 router.post('/log', async (req, res) => {
   try {
     const { song_title, artist, mood } = req.body;
     
-    // 基本验证
+    // Basic validation
     if (!song_title || !artist || !mood) {
-      return res.status(400).json({ message: '所有字段都是必填的' });
+      return res.status(400).json({ message: 'All fields are required' });
     }
     
-    // 验证心情是否在允许的列表中
+    // Validate if mood is in the allowed list
     const allowedMoods = ["Happy", "Sad", "Energetic", "Calm"];
     if (!allowedMoods.includes(mood)) {
-      return res.status(400).json({ message: '无效的心情选择' });
+      return res.status(400).json({ message: 'Invalid mood selection' });
     }
     
-    // TODO: 在实际项目中，应从身份验证中间件获取用户ID
-    // 在此处我们使用一个测试用户ID
-    const user_id = "user_test_id";  // 在集成身份验证后应替换
+    // TODO: In a real project, user ID should be obtained from auth middleware
+    // Here we use a test user ID
+    const user_id = "user_test_id";  // Should be replaced after auth integration
     
-    // 创建新的歌曲记录
+    // Create new song log
     const newSongLog = new SongLog({
       user_id,
       song_title,
       artist,
       mood,
-      // timestamp 字段将使用默认值（当前时间）
+      // timestamp field will use default value (current time)
     });
     
-    // 保存到数据库
+    // Save to database
     const savedSongLog = await newSongLog.save();
     
     res.status(201).json({
       success: true,
-      message: '歌曲和心情已成功记录',
+      message: 'Song and mood recorded successfully',
       data: savedSongLog
     });
   } catch (error) {
-    console.error('记录歌曲时出错:', error);
+    console.error('Error logging song:', error);
     res.status(500).json({
       success: false,
-      message: '服务器错误，无法记录歌曲',
+      message: 'Server error, unable to log song',
       error: error.message
     });
   }

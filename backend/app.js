@@ -3,37 +3,37 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 
-// 引入路由
+// Import routes
 const songLogRoutes = require('./routes/songLog');
 
-// 初始化Express应用
+// Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// 中间件
+// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 连接到MongoDB
+// Connect to MongoDB
 mongoose.connect('mongodb://localhost:27017/moodscape', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-  .then(() => console.log('MongoDB连接成功'))
-  .catch(err => console.error('MongoDB连接失败:', err));
+  .then(() => console.log('MongoDB connected successfully'))
+  .catch(err => console.error('MongoDB connection failed:', err));
 
-// 使用路由
+// Use routes
 app.use('/api/song', songLogRoutes);
 
-// 基本路由
+// Base route
 app.get('/', (req, res) => {
-  res.send('MoodScape API 正在运行');
+  res.send('MoodScape API is running');
 });
 
-// 启动服务器
+// Start server
 app.listen(PORT, () => {
-  console.log(服务器运行在端口 );
+  console.log(`Server running on port ${PORT}`);
 });
 
 module.exports = app;
