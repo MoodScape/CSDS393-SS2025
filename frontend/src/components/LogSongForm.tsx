@@ -1,10 +1,27 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import './LogSongForm.css';
+
+// 定义类型
+interface FormData {
+  song_title: string;
+  artist: string;
+  mood: string;
+}
+
+interface ApiResponse {
+  message: string;
+  data: {
+    song_title: string;
+    artist: string;
+    mood: string;
+    timestamp: string;
+  };
+}
 
 const LogSongForm: React.FC = () => {
   // Form state
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     song_title: '',
     artist: '',
     mood: ''
@@ -16,15 +33,15 @@ const LogSongForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   
   // Hardcoded list of moods as specified
-  const MOODS = ["Happy", "Sad", "Energetic", "Calm"];
+  const MOODS = ["Happy", "Sad", "Energetic", "Calm"] as const;
   
   // Handle input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: { target: { name: string; value: string } }) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prev: FormData) => ({
+      ...prev,
       [name]: value
-    });
+    }));
     
     // Clear success/error messages when user starts typing again
     if (success) setSuccess(false);
@@ -32,7 +49,7 @@ const LogSongForm: React.FC = () => {
   };
   
   // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
@@ -48,7 +65,7 @@ const LogSongForm: React.FC = () => {
       }
       
       // Submit data to the API
-      const response = await axios.post(
+      const response: AxiosResponse<ApiResponse> = await axios.post(
         '/api/song/log',
         formData,
         {
@@ -69,8 +86,9 @@ const LogSongForm: React.FC = () => {
           mood: ''
         });
       }
-    } catch (error: any) {
-      if (axios.isAxiosError(error)) {
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const error = err as AxiosError<{ error: string }>;
         setError(error.response?.data?.error || 'Failed to submit the form');
       } else {
         setError('An unexpected error occurred');
