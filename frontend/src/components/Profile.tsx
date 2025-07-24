@@ -35,56 +35,56 @@ const Profile: React.FC = () => {
   const [followLoading, setFollowLoading] = useState(false);
 
   useEffect(() => {
+    const fetchProfile = async (username: string) => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // First get user ID by username
+        const token = sessionStorage.getItem('access_token');
+        if (!token) {
+          navigate('/login');
+          return;
+        }
+
+        const userResponse = await fetch(`${API_BASE_URL}/api/users/by-username/${username}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!userResponse.ok) {
+          throw new Error('User not found');
+        }
+
+        const userData = await userResponse.json();
+
+        // Then get the full profile
+        const profileResponse = await fetch(`${API_BASE_URL}/api/users/${userData.id}/public-profile`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!profileResponse.ok) {
+          throw new Error('Failed to fetch profile');
+        }
+
+        const data = await profileResponse.json();
+        setProfileData(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load profile');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (username) {
       fetchProfile(username);
     }
-  }, [username]);
-
-  const fetchProfile = async (username: string) => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // First get user ID by username
-      const token = sessionStorage.getItem('access_token');
-      if (!token) {
-        navigate('/login');
-        return;
-      }
-
-      const userResponse = await fetch(`${API_BASE_URL}/api/users/by-username/${username}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!userResponse.ok) {
-        throw new Error('User not found');
-      }
-
-      const userData = await userResponse.json();
-
-      // Then get the full profile
-      const profileResponse = await fetch(`${API_BASE_URL}/api/users/${userData.id}/public-profile`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!profileResponse.ok) {
-        throw new Error('Failed to fetch profile');
-      }
-
-      const data = await profileResponse.json();
-      setProfileData(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load profile');
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [username, navigate]);
 
   const handleFollowToggle = async () => {
     if (!profileData) return;
