@@ -39,7 +39,7 @@ const FollowButton: React.FC<FollowButtonProps> = ({
       onFollowChange(!isFollowing);
     } catch (error) {
       console.error('Follow toggle error:', error);
-      // You could add a toast notification here
+      alert('Failed to update follow status. Please try again.');
     } finally {
       setLoading(false);
     }
