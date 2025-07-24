@@ -103,11 +103,7 @@ def signup():
 
         new_user = User(
             username=username,
-            password_hash=hashed_password,
-            bio="",
-            followers=[],
-            following=[],
-            preferences={}
+            password_hash=hashed_password
         )
         
         new_user.save()
