@@ -9,7 +9,11 @@ import logging
 from datetime import datetime, timedelta, timezone
 from config import config
 
+# Import models to register them with MongoEngine
 from models import User, SongLog
+
+# Import blueprints
+from routes.users import users_bp
 
 # Load environment variables
 load_dotenv()
@@ -32,6 +36,9 @@ logger = logging.getLogger(__name__)
 CORS(app)
 jwt = JWTManager(app)
 
+# Register blueprints
+app.register_blueprint(users_bp, url_prefix='/api/users')
+
 # MongoDB connection using MongoEngine
 try:
     config_name = os.getenv('FLASK_ENV', 'development')
@@ -49,8 +56,7 @@ def health_check():
     """Health check endpoint for deployment verification"""
     try:
         # Test MongoDB connection
-        val = User.objects.first()  # Try a simple query
-        print(val)
+        User.objects.first()  # Try a simple query
         db_status = "connected"
         return jsonify({
             'status': 'healthy',
@@ -135,6 +141,6 @@ def internal_error(error):
     return jsonify({'error': 'Internal server error'}), 500
 
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', 5000))
+    port = int(os.getenv('PORT', 5001))
     debug = os.getenv('FLASK_ENV') == 'development'
     app.run(host='0.0.0.0', port=port, debug=debug) 
