@@ -20,6 +20,7 @@ interface SignupResponse {
 }
 
 const Signup: React.FC = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<SignupFormData>({
     username: '',
     password: ''
@@ -64,6 +65,7 @@ const Signup: React.FC = () => {
 
       // Successful signup, redirect to login page
       alert('Account created successfully!')
+      navigate("/login")
       
     } catch (err: unknown) {
       if (axios.isAxiosError(err) && err.response?.data?.error) {
