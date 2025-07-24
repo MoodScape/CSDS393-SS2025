@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
+import axios, { AxiosError } from 'axios';
 import './SongLogger.css';
 
 interface SongLogFormData {
@@ -17,6 +17,10 @@ interface SongLoggerProps {
   user: User;
 }
 
+interface ApiErrorResponse {
+  error: string;
+}
+
 const MOOD_OPTIONS = [
   'Happy',
   'Sad',
@@ -26,9 +30,16 @@ const MOOD_OPTIONS = [
   'Relaxed',
   'Anxious',
   'Nostalgic'
-];
+] as const;
 
-const SongLogger: React.FC<SongLoggerProps> = ({ user }) => {
+type Mood = (typeof MOOD_OPTIONS)[number];
+
+// Default to localhost in development, production URL in production
+const API_BASE_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5001'
+  : 'https://csds393-ss2025-backend.onrender.com';
+
+const SongLogger: React.FC<SongLoggerProps> = ({ user }: SongLoggerProps) => {
   const [formData, setFormData] = useState<SongLogFormData>({
     song_title: '',
     artist: '',
@@ -36,21 +47,21 @@ const SongLogger: React.FC<SongLoggerProps> = ({ user }) => {
   });
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<string>('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ): void => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
+    setFormData((prevData: SongLogFormData) => ({
+      ...prevData,
       [name]: value
     }));
     if (error) setError('');
     if (success) setSuccess('');
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     
     if (!formData.song_title || !formData.artist || !formData.mood) {
@@ -63,14 +74,14 @@ const SongLogger: React.FC<SongLoggerProps> = ({ user }) => {
     setSuccess('');
 
     try {
-      const apiUrl = (process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost')
-        ? 'http://localhost:5001'
-        : 'https://csds393-ss2025-backend.onrender.com';
-      
       const token = sessionStorage.getItem('access_token');
       
-      await axios.post(
-        `${apiUrl}/api/songlog`,
+      if (!token) {
+        throw new Error('Authentication token not found');
+      }
+      
+      await axios.post<{ message: string }>(
+        `${API_BASE_URL}/api/songlog`,
         formData,
         {
           headers: {
@@ -87,9 +98,10 @@ const SongLogger: React.FC<SongLoggerProps> = ({ user }) => {
         mood: ''
       });
       
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err) && err.response?.data?.error) {
-        setError(err.response.data.error);
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const axiosError = err as AxiosError<ApiErrorResponse>;
+        setError(axiosError.response?.data?.error || 'Failed to log song. Please try again.');
       } else {
         setError('Failed to log song. Please try again.');
       }
@@ -143,7 +155,7 @@ const SongLogger: React.FC<SongLoggerProps> = ({ user }) => {
             required
           >
             <option value="">Select a mood</option>
-            {MOOD_OPTIONS.map(mood => (
+            {MOOD_OPTIONS.map((mood) => (
               <option key={mood} value={mood.toLowerCase()}>
                 {mood}
               </option>
