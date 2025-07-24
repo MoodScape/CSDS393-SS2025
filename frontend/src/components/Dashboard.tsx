@@ -1,5 +1,6 @@
 import React from 'react';
 import './Dashboard.css';
+import SongLogger from './SongLogger';
 
 interface User {
   id: string;
@@ -30,6 +31,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
           <h2>Your Personalized Music & Mood Dashboard</h2>
           <p>Track your music preferences and mood patterns in one place.</p>
         </div>
+
+        <SongLogger user={user} />
         
         <div className="dashboard-cards">
           <div className="dashboard-card">
