@@ -114,7 +114,7 @@ def signup():
         }), 201
     
     except Exception as e:
-        return jsonify({'error': 'Registration failed'})
+        return jsonify({'error': 'Registration failed'}), 500
     
 
 # Login endpoint
