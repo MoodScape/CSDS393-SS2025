@@ -1,10 +1,11 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, create_access_token
 from mongoengine import connect
 from dotenv import load_dotenv
 import os
 import bcrypt
+import logging
 from datetime import datetime, timedelta, timezone
 from config import config
 
@@ -19,6 +20,13 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'SOME_SECRET_KEY')
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'SOME_JWT_SECRET_KEY')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 # Initialize extensions
 CORS(app)
@@ -83,7 +91,7 @@ def signup():
 
         if not  username or not password:
             return jsonify({'error': 'Username and Password are required'}), 400
-        
+
         existing_user = User.objects(username=username).first()
         if existing_user:
             return jsonify({'error': 'Username is already in use'}), 409
@@ -111,15 +119,67 @@ def signup():
     
     except Exception as e:
         return jsonify({'error': 'Registration failed'})
+    
 
+# Login endpoint
+@app.route('/api/login', methods=['POST'])
+def login():
+    """User login endpoint with JWT token generation"""
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+        
+        username = data.get('username')
+        password = data.get('password')
+
+        if not  username or not password:
+            return jsonify({'error': 'Username and Password are required'}), 400
+        
+            
+        if not username or not password:
+            return jsonify({'error': 'Username and password are required'}), 400
+        
+        # Find user by username
+        user = User.objects(username=username).first()
+        
+        # Use a dummy password hash for timing attack prevention
+        dummy_hash = bcrypt.hashpw(b"dummy_password", bcrypt.gensalt())
+        password_hash = user.password_hash.encode('utf-8') if user else dummy_hash
+        
+        # Verify password (always perform the check to prevent timing attacks)
+        password_valid = bcrypt.checkpw(password.encode('utf-8'), password_hash)
+        
+        if not user or not password_valid:
+            return jsonify({'error': 'Invalid credentials'}), 401
+        
+        # Create JWT token
+        access_token = create_access_token(identity=user.user_id)
+        
+        return jsonify({
+            'message': 'Login successful',
+            'access_token': access_token,
+            'user': {
+                'id': user.user_id,
+                'username': user.username,
+                'bio': user.bio
+            }
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Login error: {str(e)}", exc_info=True)
+        return jsonify({'error': 'Internal server error'}), 500
 
 # Error handlers
 @app.errorhandler(404)
 def not_found(error):
+    logger.warning(f"404 error: {request.url}")
     return jsonify({'error': 'Not found'}), 404
 
 @app.errorhandler(500)
 def internal_error(error):
+    logger.error(f"500 error: {str(error)}", exc_info=True)
     return jsonify({'error': 'Internal server error'}), 500
 
 if __name__ == '__main__':
