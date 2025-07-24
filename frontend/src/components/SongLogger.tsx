@@ -1,5 +1,5 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-import axios, { AxiosError } from 'axios';
+import React from 'react';
+import axios from 'axios';
 import './SongLogger.css';
 
 interface SongLogFormData {
@@ -40,17 +40,17 @@ const API_BASE_URL = window.location.hostname === 'localhost'
   : 'https://csds393-ss2025-backend.onrender.com';
 
 const SongLogger: React.FC<SongLoggerProps> = ({ user }: SongLoggerProps) => {
-  const [formData, setFormData] = useState<SongLogFormData>({
+  const [formData, setFormData] = React.useState<SongLogFormData>({
     song_title: '',
     artist: '',
     mood: ''
   });
-  const [error, setError] = useState<string>('');
-  const [success, setSuccess] = useState<string>('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = React.useState<string>('');
+  const [success, setSuccess] = React.useState<string>('');
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ): void => {
     const { name, value } = e.target;
     setFormData((prevData: SongLogFormData) => ({
@@ -61,7 +61,7 @@ const SongLogger: React.FC<SongLoggerProps> = ({ user }: SongLoggerProps) => {
     if (success) setSuccess('');
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     
     if (!formData.song_title || !formData.artist || !formData.mood) {
@@ -98,10 +98,10 @@ const SongLogger: React.FC<SongLoggerProps> = ({ user }: SongLoggerProps) => {
         mood: ''
       });
       
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        const axiosError = err as AxiosError<ApiErrorResponse>;
-        setError(axiosError.response?.data?.error || 'Failed to log song. Please try again.');
+    } catch (error: unknown) {
+      const err = error as Error | { response?: { data?: { error: string } } };
+      if ('response' in err && err.response?.data?.error) {
+        setError(err.response.data.error);
       } else {
         setError('Failed to log song. Please try again.');
       }
