@@ -76,10 +76,11 @@ def unfollow_user(user_id):
         # Use string IDs and remove if present
         if user_id not in current_user.following:
             return jsonify({'error': 'Not following this user'}), 400
-        if user_id in current_user.following:
-            current_user.following.remove(user_id)
+        current_user.following.remove(user_id)
         if current_user_id in target_user.followers:
             target_user.followers.remove(current_user_id)
+        else:
+            return jsonify({'error': 'Inconsistent follow relationship: current_user_id not in followers list'}), 400
         current_user.save()
         target_user.save()
         return jsonify({
