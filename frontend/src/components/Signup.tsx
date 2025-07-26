@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Signup.css';
 
@@ -8,19 +7,17 @@ interface SignupFormData {
   password: string;
 }
 
-interface User {
-  id: string;
-  username: string;
-  bio?: string;
-}
-
 interface SignupResponse {
   message: string;
-  user_id: string;
+  access_token: string;
+  user: {
+    id: string;
+    username: string;
+    bio?: string;
+  };
 }
 
 const Signup: React.FC = () => {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState<SignupFormData>({
     username: '',
     password: ''
@@ -50,7 +47,7 @@ const Signup: React.FC = () => {
 
     try {
       const apiUrl = (process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost')
-        ? 'http://localhost:5000'
+        ? 'http://localhost:5001'
         : 'https://csds393-ss2025-backend.onrender.com';
       
       const response = await axios.post<SignupResponse>(
@@ -63,9 +60,13 @@ const Signup: React.FC = () => {
         }
       );
 
-      // Successful signup, redirect to login page
-      alert('Account created successfully!')
-      navigate("/login")
+       // Successful signup, redirect to dashboard
+      const { access_token, user } = response.data;
+      sessionStorage.setItem('access_token', access_token);
+      sessionStorage.setItem('user', JSON.stringify(user));
+
+
+      window.location.href = '/dashboard'
       
     } catch (err: unknown) {
       if (axios.isAxiosError(err) && err.response?.data?.error) {

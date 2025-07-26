@@ -117,9 +117,16 @@ def signup():
         
         new_user.save()
 
+        access_token = create_access_token(identity=str(new_user.id))
+
         return jsonify({
             'message': 'User created successfully',
-            'user_id': new_user.user_id
+            'access_token': access_token,
+            'user': {
+                'id': new_user.user_id,
+                'username': new_user.username,
+                'bio': new_user.bio
+            }
         }), 201
     
     except Exception as e:
