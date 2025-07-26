@@ -16,7 +16,12 @@ interface User {
 
 interface SignupResponse {
   message: string;
-  user_id: string;
+  access_token: string;
+  user: {
+    id: string;
+    username: string;
+    bio?: string;
+  };
 }
 
 const Signup: React.FC = () => {
@@ -63,9 +68,14 @@ const Signup: React.FC = () => {
         }
       );
 
-      // Successful signup, redirect to login page
+       // Successful signup, redirect to dashboard
       alert('Account created successfully!')
-      navigate("/login")
+      const { access_token, user } = response.data;
+      sessionStorage.setItem('access_token', access_token);
+      sessionStorage.setItem('user', JSON.stringify(user));
+
+
+      window.location.href = '/dashboard'
       
     } catch (err: unknown) {
       if (axios.isAxiosError(err) && err.response?.data?.error) {

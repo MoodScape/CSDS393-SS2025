@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import Profile from './components/Profile';
+import Signup from './components/Signup'
 import './App.css';
 
 interface User {
@@ -73,6 +74,14 @@ function App() {
               isAuthenticated ? 
                 <Navigate to="/dashboard" replace /> : 
                 <Login onLoginSuccess={handleLoginSuccess} />
+            } 
+          />
+          <Route 
+            path="/signup" 
+            element={
+              isAuthenticated ? 
+                <Navigate to="/dashboard" replace /> : 
+                <Signup />
             } 
           />
           <Route 
