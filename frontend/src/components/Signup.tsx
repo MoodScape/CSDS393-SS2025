@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './Login.css';
+import './Signup.css';
 
-interface LoginFormData {
+interface SignupFormData {
   username: string;
   password: string;
 }
@@ -13,18 +14,14 @@ interface User {
   bio?: string;
 }
 
-interface LoginResponse {
+interface SignupResponse {
   message: string;
-  access_token: string;
-  user: User;
+  user_id: string;
 }
 
-interface LoginProps {
-  onLoginSuccess: (token: string, user: User) => void;
-}
-
-const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
-  const [formData, setFormData] = useState<LoginFormData>({
+const Signup: React.FC = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState<SignupFormData>({
     username: '',
     password: ''
   });
@@ -53,11 +50,11 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
     try {
       const apiUrl = (process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost')
-        ? 'http://localhost:5001'
+        ? 'http://localhost:5000'
         : 'https://csds393-ss2025-backend.onrender.com';
       
-      const response = await axios.post<LoginResponse>(
-        `${apiUrl}/api/login`,
+      const response = await axios.post<SignupResponse>(
+        `${apiUrl}/api/signup`,
         formData,
         {
           headers: {
@@ -66,20 +63,15 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         }
       );
 
-      const { access_token, user } = response.data;
-      
-      // Store token in sessionStorage (more secure than localStorage)
-      sessionStorage.setItem('access_token', access_token);
-      sessionStorage.setItem('user', JSON.stringify(user));
-      
-      // Call success callback
-      onLoginSuccess(access_token, user);
+      // Successful signup, redirect to login page
+      alert('Account created successfully!')
+      navigate("/login")
       
     } catch (err: unknown) {
       if (axios.isAxiosError(err) && err.response?.data?.error) {
         setError(err.response.data.error);
       } else {
-        setError('Login failed. Please try again.');
+        setError('Signup failed. Please try again.');
       }
     } finally {
       setIsLoading(false);
@@ -87,10 +79,10 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-form">
+    <div className="signup-container">
+      <div className="signup-form">
         <h2>Welcome to MoodScape</h2>
-        <p>Sign in to access your personalized dashboard</p>
+        <p>Register now to setup your personalized dashboard</p>
         
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -125,13 +117,13 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
           <button 
             type="submit" 
-            className="login-button"
+            className="signup-button"
             disabled={isLoading}
           >
-            {isLoading ? 'Signing in...' : 'Sign In'}
+            {isLoading ? 'Creating your account...' : 'Sign-up'}
           </button>
 
-          <p>Don't have an account? <a href='/signup'>Sign-up</a>
+          <p>Already have an account? <a href='/login'>Log in</a>
           </p>
         </form>
       </div>
@@ -139,4 +131,4 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   );
 };
 
-export default Login;
+export default Signup;

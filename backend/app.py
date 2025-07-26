@@ -74,6 +74,58 @@ def health_check():
             'message': 'MoodScape API has issues'
         }), 500
 
+
+# Echo endpoint for testing
+@app.route('/api/echo', methods=['POST'])
+def echo():
+    """Echo endpoint for testing API connectivity"""
+    data = request.get_json()
+    return jsonify({
+        'message': 'Echo response',
+        'received_data': data,
+        'timestamp': datetime.now(timezone.utc).isoformat()
+    }), 200
+
+# Signup Endpoint
+@app.route('/api/signup', methods=['POST'])
+def signup():
+
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+        
+        username = data.get('username')
+        password = data.get('password')
+
+        if not  username or not password:
+            return jsonify({'error': 'Username and Password are required'}), 400
+
+        existing_user = User.objects(username=username).first()
+        if existing_user:
+            return jsonify({'error': 'Username is already in use'}), 409
+
+        bytes = password.encode('utf-8')
+        salt = bcrypt.gensalt()
+        hashed_password = bcrypt.hashpw(bytes, salt)
+        hashed_password = hashed_password.decode('utf-8')
+
+        new_user = User(
+            username=username,
+            password_hash=hashed_password
+        )
+        
+        new_user.save()
+
+        return jsonify({
+            'message': 'User created successfully',
+            'user_id': new_user.user_id
+        }), 201
+    
+    except Exception as e:
+        return jsonify({'error': 'Registration failed'}), 500
+   
+  
 # Login endpoint
 @app.route('/api/login', methods=['POST'])
 def login():
@@ -86,9 +138,10 @@ def login():
         
         username = data.get('username')
         password = data.get('password')
+
+        if not  username or not password:
+            return jsonify({'error': 'Username and Password are required'}), 400
         
-        if not username or not password:
-            return jsonify({'error': 'Username and password are required'}), 400
         
         # Find user by username
         user = User.objects(username=username).first()
@@ -121,16 +174,6 @@ def login():
         return jsonify({'error': 'Internal server error'}), 500
 
 
-# Echo endpoint for testing
-@app.route('/api/echo', methods=['POST'])
-def echo():
-    """Echo endpoint for testing API connectivity"""
-    data = request.get_json()
-    return jsonify({
-        'message': 'Echo response',
-        'received_data': data,
-        'timestamp': datetime.now(timezone.utc).isoformat()
-    }), 200
 
 # Error handlers
 @app.errorhandler(404)
