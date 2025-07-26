@@ -133,9 +133,6 @@ def login():
         if not  username or not password:
             return jsonify({'error': 'Username and Password are required'}), 400
         
-            
-        if not username or not password:
-            return jsonify({'error': 'Username and password are required'}), 400
         
         # Find user by username
         user = User.objects(username=username).first()
