@@ -1,31 +1,113 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Login from './components/Login';
+import Dashboard from './components/Dashboard';
+import Profile from './components/Profile';
+import Signup from './components/Signup'
 import './App.css';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import CurrentUserProfile from './components/CurrentUserProfile';
-import SocialFeed from './components/SocialFeed';
+
+interface User {
+  id: string;
+  username: string;
+  bio?: string;
+}
+
+// Protected Route Component
+const ProtectedRoute: React.FC<{ children: React.ReactNode; isAuthenticated: boolean }> = ({ 
+  children, 
+  isAuthenticated 
+}) => {
+  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+};
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const token = sessionStorage.getItem('access_token');
+    const storedUser = sessionStorage.getItem('user');
+    
+    if (token && storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+        setIsAuthenticated(true);
+      } catch (error) {
+        sessionStorage.removeItem('access_token');
+        sessionStorage.removeItem('user');
+      }
+    }
+    
+    setIsLoading(false);
+  }, []);
+
+  // Only update state, do not write to sessionStorage here
+  const handleLoginSuccess = (token: string, userData: User) => {
+    setUser(userData);
+    setIsAuthenticated(true);
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('access_token');
+    sessionStorage.removeItem('user');
+    setUser(null);
+    setIsAuthenticated(false);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/profile" element={<CurrentUserProfile />} />
-          <Route path="/feed" element={<SocialFeed />} />
-          <Route path="/" element={
-            <header className="App-header">
-              <img src={logo} className="App-logo" alt="logo" />
-              <p>
-                Welcome to MoodScape
-              </p>
-              <a href="/profile" style={{color: '#61dafb'}}>
-                Go to Profile
-              </a>
-              <a href="/feed" style={{color: '#61dafb', display: 'block', marginTop: '10px'}}>
-                View Social Feed
-              </a>
-            </header>
-          } />
+          <Route 
+            path="/login" 
+            element={
+              isAuthenticated ? 
+                <Navigate to="/dashboard" replace /> : 
+                <Login onLoginSuccess={handleLoginSuccess} />
+            } 
+          />
+          <Route 
+            path="/signup" 
+            element={
+              isAuthenticated ? 
+                <Navigate to="/dashboard" replace /> : 
+                <Signup />
+            } 
+          />
+          <Route 
+            path="/dashboard" 
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
+                <Dashboard user={user!} onLogout={handleLogout} />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/profile/:username" 
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
+                <Profile />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/" 
+            element={
+              isAuthenticated ? 
+                <Navigate to="/dashboard" replace /> : 
+                <Navigate to="/login" replace />
+            } 
+          />
         </Routes>
       </div>
     </Router>
