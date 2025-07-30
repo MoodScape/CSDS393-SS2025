@@ -127,10 +127,6 @@ nav {
   background: #e9ecef;
 }
 
-.song-info {
-  flex: 1;
-}
-
 .song-title {
   font-size: 1.1rem;
   font-weight: 600;
@@ -181,14 +177,6 @@ nav {
   color: #666;
   font-style: italic;
   padding: 24px 0;
-}
-
-.placeholder-feed {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  padding: 32px 24px;
-  text-align: center;
 }
 
 .bio-edit-row {
@@ -243,6 +231,49 @@ nav {
 .bio-placeholder {
   color: #aaa;
   font-style: italic;
+}
+
+.social-feed-section {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  min-height: 100vh;
+}
+
+.social-feed-section h2 {
+  display: none;
+}
+
+.search-section {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 20px;
+  margin: 0;
+  box-shadow: none;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.search-section h3 {
+  display: none;
+}
+
+.feed-placeholder {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 40px 20px;
+  text-align: center;
+  color: #8e8e93;
+  font-size: 14px;
+  box-shadow: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 @media (max-width: 900px) {
