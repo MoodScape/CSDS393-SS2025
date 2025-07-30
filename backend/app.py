@@ -78,9 +78,8 @@ def not_found(error):
 def internal_error(error):
     return jsonify({'error': 'Internal server error'}), 500
 
-from routes.profile import profile_bp
-app.register_blueprint(profile_bp)
-
+from routes.recommendations import recommendations_bp
+app.register_blueprint(recommendations_bp, url_prefix='/api/recommendations')
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
     debug = os.getenv('FLASK_ENV') == 'development'
