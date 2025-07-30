@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from models import User, SongLog
 from datetime import datetime, timezone, timedelta
 
@@ -8,6 +8,7 @@ from collections import Counter
 moods_bp = Blueprint('moods', __name__)
 
 @moods_bp.route('/summary', methods=['GET'])
+@jwt_required()
 def get_mood_summary():
     """ Get user's data """
     user_id = get_jwt_identity()
