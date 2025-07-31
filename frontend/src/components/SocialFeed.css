@@ -1,0 +1,51 @@
+.social-feed {
+  background: white;
+  border-radius: 12px;
+  padding: 32px 24px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.social-feed h2 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 24px;
+}
+
+.recommendations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.recommendation-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  border-left: 4px solid #1db954;
+}
+
+.recommendation-card:hover {
+  background: #e9ecef;
+}
+
+.song-info h3 {
+  font-size: 1.2rem;
+  margin: 0 0 8px 0;
+  color: #333;
+}
+
+.artist {
+  color: #666;
+  margin: 0 0 12px 0;
+}
+
+.friends {
+  color: #667eea;
+  font-size: 0.95rem;
+  margin: 0;
+}

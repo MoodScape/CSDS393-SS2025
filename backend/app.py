@@ -15,7 +15,7 @@ from models import User, SongLog
 # Import blueprints
 from routes.users import users_bp
 from routes.songlog import songlog_bp
-
+from routes.recommendations import recommendations_bp
 # Load environment variables
 load_dotenv()
 
@@ -40,7 +40,7 @@ jwt = JWTManager(app)
 # Register blueprints
 app.register_blueprint(users_bp, url_prefix='/api/users')
 app.register_blueprint(songlog_bp, url_prefix='/api/songlog')
-
+app.register_blueprint(recommendations_bp, url_prefix='/api/recommendations')
 # MongoDB connection using MongoEngine
 try:
     config_name = os.getenv('FLASK_ENV', 'development')

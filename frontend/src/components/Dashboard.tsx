@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import LogSong from './LogSong';
+import SocialFeed from './SocialFeed';
 import UserSearch from './UserSearch';
 import { API_BASE_URL } from '../api';
 import './Dashboard.css';
