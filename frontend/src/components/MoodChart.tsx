@@ -72,7 +72,6 @@ const MoodChart: React.FC = () => {
   const createChart = () => {
     if (!chartRef.current || !moodData) return;
 
-    // Destroy existing chart
     if (chartInstance.current) {
       chartInstance.current.destroy();
     }
