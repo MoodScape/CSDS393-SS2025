@@ -47,7 +47,7 @@ const FriendRecommendations: React.FC<FriendRecommendationsProps> = ({ onFollowC
       const data = await response.json();
       setRecommendations(data.recommendations || []);
       
-      // 初始化关注状态
+      // Initialize follow status
       const initialFollowStatus: Record<string, boolean> = {};
       data.recommendations?.forEach((rec: RecommendedUser) => {
         initialFollowStatus[rec.user.id] = false;
@@ -115,8 +115,8 @@ const FriendRecommendations: React.FC<FriendRecommendationsProps> = ({ onFollowC
   if (loading) {
     return (
       <div className="friend-recommendations">
-        <h2>推荐朋友</h2>
-        <div className="loading">正在加载推荐...</div>
+               <h2>Friend Recommendations</h2>
+       <div className="loading">Loading recommendations...</div>
       </div>
     );
   }
@@ -124,20 +124,20 @@ const FriendRecommendations: React.FC<FriendRecommendationsProps> = ({ onFollowC
   if (error) {
     return (
       <div className="friend-recommendations">
-        <h2>推荐朋友</h2>
-        <div className="error">{error}</div>
+               <h2>Friend Recommendations</h2>
+       <div className="error">{error}</div>
       </div>
     );
   }
 
   return (
     <div className="friend-recommendations">
-      <h2>推荐朋友</h2>
-      {recommendations.length === 0 ? (
-        <div className="no-recommendations">
-          <p>暂时没有推荐的朋友。</p>
-          <p>继续记录音乐，我们会为您推荐志同道合的朋友！</p>
-        </div>
+             <h2>Friend Recommendations</h2>
+       {recommendations.length === 0 ? (
+         <div className="no-recommendations">
+           <p>No friend recommendations available at the moment.</p>
+           <p>Keep logging music and we'll recommend like-minded friends for you!</p>
+         </div>
       ) : (
         <div className="recommendations-list">
           {recommendations.map((recommendation) => (
@@ -157,16 +157,16 @@ const FriendRecommendations: React.FC<FriendRecommendationsProps> = ({ onFollowC
                   <button
                     className="follow-btn following"
                     onClick={() => handleUnfollow(recommendation.user.id, recommendation.user.username)}
-                  >
-                    已关注
-                  </button>
+                                     >
+                     Following
+                   </button>
                 ) : (
                   <button
                     className="follow-btn"
                     onClick={() => handleFollow(recommendation.user.id, recommendation.user.username)}
-                  >
-                    关注
-                  </button>
+                                     >
+                     Follow
+                   </button>
                 )}
               </div>
             </div>

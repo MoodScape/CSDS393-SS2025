@@ -1,37 +1,37 @@
-# 朋友推荐功能 (Friend Recommendations)
+# Friend Recommendations Feature
 
-## 功能概述
+## Feature Overview
 
-朋友推荐功能帮助用户发现具有相似音乐品味的其他用户，从而增强平台的社交互动和用户留存率。
+The friend recommendations feature helps users discover other users with similar music tastes, thereby enhancing platform social interaction and user retention.
 
-## 功能特性
+## Feature Characteristics
 
-### 推荐逻辑
-1. **基于共同音乐偏好**: 分析用户最近听过的歌曲心情，找到有相似偏好的用户
-2. **朋友的朋友**: 推荐被用户关注的人所关注的用户
-3. **智能排序**: 根据共同兴趣数量和互动频率进行排序
+### Recommendation Logic
+1. **Based on Common Music Preferences**: Analyze user's recent song moods to find users with similar preferences
+2. **Friends of Friends**: Recommend users followed by people the current user follows
+3. **Smart Sorting**: Sort by number of common interests and interaction frequency
 
-### 用户界面
-- 现代化的卡片式布局
-- 显示用户头像（基于用户名首字母）
-- 推荐理由说明
-- 一键关注/取消关注功能
-- 响应式设计，支持移动端
+### User Interface
+- Modern card-based layout
+- Display user avatars (based on username initials)
+- Recommendation rationale display
+- One-click follow/unfollow functionality
+- Responsive design supporting mobile devices
 
-## 技术实现
+## Technical Implementation
 
-### 后端 API
+### Backend API
 
-#### 端点: `GET /api/users/recommendations/friends`
+#### Endpoint: `GET /api/users/recommendations/friends`
 
-**功能**: 获取朋友推荐列表
+**Function**: Get friend recommendations list
 
-**请求头**:
+**Headers**:
 ```
 Authorization: Bearer <jwt_token>
 ```
 
-**响应格式**:
+**Response Format**:
 ```json
 {
   "recommendations": [
@@ -41,7 +41,7 @@ Authorization: Bearer <jwt_token>
         "username": "username",
         "bio": "user_bio"
       },
-      "rationale": "推荐理由",
+      "rationale": "Recommendation reason",
       "score": 5
     }
   ],
@@ -49,89 +49,89 @@ Authorization: Bearer <jwt_token>
 }
 ```
 
-**推荐算法**:
-1. 获取当前用户最近20首歌曲的心情偏好
-2. 排除已关注的用户和当前用户
-3. 基于MongoDB聚合管道查找有相似心情偏好的用户
-4. 计算"朋友的朋友"关系
-5. 合并结果并按分数排序
+**Recommendation Algorithm**:
+1. Get current user's recent 20 songs mood preferences
+2. Exclude already followed users and current user
+3. Use MongoDB aggregation pipeline to find users with similar mood preferences
+4. Calculate "friends of friends" relationships
+5. Merge results and sort by score
 
-### 前端组件
+### Frontend Components
 
-#### FriendRecommendations 组件
+#### FriendRecommendations Component
 
-**功能**:
-- 获取并显示推荐用户列表
-- 处理关注/取消关注操作
-- 实时更新关注状态
-- 错误处理和加载状态
+**Functions**:
+- Fetch and display recommended users list
+- Handle follow/unfollow operations
+- Real-time update of follow status
+- Error handling and loading states
 
 **Props**:
-- `onFollowChange`: 关注状态改变时的回调函数
+- `onFollowChange`: Callback function when follow status changes
 
-**状态管理**:
-- `recommendations`: 推荐用户列表
-- `loading`: 加载状态
-- `error`: 错误信息
-- `followStatus`: 关注状态映射
+**State Management**:
+- `recommendations`: Recommended users list
+- `loading`: Loading state
+- `error`: Error information
+- `followStatus`: Follow status mapping
 
-## 数据库设计
+## Database Design
 
-### 用户模型增强
-- `followers`: 关注者列表
-- `following`: 关注列表
-- `preferences`: 用户偏好设置
+### Enhanced User Model
+- `followers`: Followers list
+- `following`: Following list
+- `preferences`: User preferences settings
 
-### 歌曲日志模型
-- `mood`: 歌曲心情标签
-- `timestamp`: 记录时间
-- `user`: 用户引用
+### Song Log Model
+- `mood`: Song mood tags
+- `timestamp`: Log timestamp
+- `user`: User reference
 
-## 安装和运行
+## Installation and Setup
 
-### 后端设置
-1. 确保MongoDB已启动
-2. 安装依赖: `pip install -r requirements.txt`
-3. 启动服务器: `python app.py`
+### Backend Setup
+1. Ensure MongoDB is running
+2. Install dependencies: `pip install -r requirements.txt`
+3. Start server: `python app.py`
 
-### 前端设置
-1. 安装依赖: `npm install`
-2. 启动开发服务器: `npm start`
+### Frontend Setup
+1. Install dependencies: `npm install`
+2. Start development server: `npm start`
 
-### 测试
-运行测试脚本验证功能:
+### Testing
+Run test script to verify functionality:
 ```bash
 cd backend
 python test_recommendations.py
 ```
 
-## 使用流程
+## Usage Flow
 
-1. 用户登录后，在侧边栏选择"Friend Recommendations"
-2. 系统显示推荐用户列表
-3. 用户可以查看推荐理由并点击"关注"
-4. 关注后按钮变为"已关注"状态
-5. 已关注的用户不会再次出现在推荐列表中
+1. After user login, select "Friend Recommendations" from the sidebar
+2. System displays recommended users list
+3. Users can view recommendation reasons and click "Follow"
+4. Button changes to "Following" status after following
+5. Already followed users won't appear in recommendations list again
 
-## 性能优化
+## Performance Optimization
 
-- 使用MongoDB聚合管道进行高效查询
-- 限制推荐结果数量（最多10个）
-- 缓存用户关注状态
-- 响应式设计优化移动端体验
+- Use MongoDB aggregation pipeline for efficient queries
+- Limit recommendation results (maximum 10)
+- Cache user follow status
+- Responsive design optimized for mobile experience
 
-## 未来扩展
+## Future Extensions
 
-- 基于艺术家偏好的推荐
-- 时间活跃度分析
-- 地理位置推荐
-- 机器学习优化推荐算法
-- 推荐理由的个性化展示
+- Artist preference-based recommendations
+- Time-based activity analysis
+- Geographic location recommendations
+- Machine learning optimized recommendation algorithms
+- Personalized recommendation rationale display
 
-## 错误处理
+## Error Handling
 
-- API连接错误处理
-- 用户认证失败处理
-- 数据库查询异常处理
-- 前端网络错误处理
-- 友好的错误提示信息 
+- API connection error handling
+- User authentication failure handling
+- Database query exception handling
+- Frontend network error handling
+- User-friendly error messages 

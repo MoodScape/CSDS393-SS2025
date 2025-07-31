@@ -131,18 +131,18 @@ def get_friend_recommendations():
         if not current_user:
             return jsonify({'error': 'User not found'}), 404
 
-        # 获取当前用户的音乐偏好（基于最近的歌曲日志）
+        # Get current user's music preferences (based on recent song logs)
         recent_songs = SongLog.objects(user=current_user).order_by('-timestamp').limit(20)
         user_moods = [song.mood for song in recent_songs]
         user_artists = [song.artist for song in recent_songs]
 
-        # 排除已关注的用户和当前用户
+        # Exclude already followed users and current user
         excluded_users = current_user.following + [current_user_id]
         
-        # 基于共同音乐偏好的推荐
+        # Recommendations based on common music preferences
         mood_based_recommendations = []
         if user_moods:
-            # 找到有相似心情偏好的用户
+            # Find users with similar mood preferences
             similar_users = SongLog.objects(
                 mood__in=user_moods,
                 user__nin=[ObjectId(uid) for uid in excluded_users]
@@ -166,14 +166,14 @@ def get_friend_recommendations():
                             'username': user.username,
                             'bio': user.bio
                         },
-                        'rationale': f"共同喜欢 {', '.join(common_moods)} 心情的音乐",
+                        'rationale': f"Both like {', '.join(common_moods)} mood music",
                         'score': len(common_moods) * user_data['song_count']
                     })
 
-        # 基于"朋友的朋友"的推荐
+        # Recommendations based on "friends of friends"
         friends_of_friends = []
         if current_user.following:
-            # 获取关注用户关注的用户
+            # Get users followed by users that current user follows
             following_users = User.objects(id__in=current_user.following)
             for following_user in following_users:
                 for friend_id in following_user.following:
@@ -186,24 +186,24 @@ def get_friend_recommendations():
                                     'username': friend.username,
                                     'bio': friend.bio
                                 },
-                                'rationale': f"被 {following_user.username} 关注",
+                                'rationale': f"Followed by {following_user.username}",
                                 'score': 1
                             })
 
-        # 合并推荐结果并去重
+        # Merge recommendations and remove duplicates
         all_recommendations = {}
         
-        # 添加基于心情的推荐
+        # Add mood-based recommendations
         for rec in mood_based_recommendations:
             user_id = rec['user']['id']
             if user_id not in all_recommendations:
                 all_recommendations[user_id] = rec
             else:
-                # 如果已存在，合并分数和理由
+                # If already exists, merge scores and rationales
                 all_recommendations[user_id]['score'] += rec['score']
                 all_recommendations[user_id]['rationale'] += f" | {rec['rationale']}"
 
-        # 添加朋友的朋友推荐
+        # Add friends of friends recommendations
         for rec in friends_of_friends:
             user_id = rec['user']['id']
             if user_id not in all_recommendations:
@@ -212,7 +212,7 @@ def get_friend_recommendations():
                 all_recommendations[user_id]['score'] += rec['score']
                 all_recommendations[user_id]['rationale'] += f" | {rec['rationale']}"
 
-        # 按分数排序并限制结果数量
+        # Sort by score and limit results
         sorted_recommendations = sorted(
             all_recommendations.values(),
             key=lambda x: x['score'],

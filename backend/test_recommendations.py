@@ -11,10 +11,10 @@ import sys
 BASE_URL = "http://localhost:5001/api"
 
 def test_recommendations():
-    """测试朋友推荐功能"""
+    """Test friend recommendations functionality"""
     
-    # 1. 注册测试用户
-    print("1. 注册测试用户...")
+    # 1. Register test users
+    print("1. Registering test users...")
     test_users = [
         {"username": "testuser1", "password": "password123"},
         {"username": "testuser2", "password": "password123"},
@@ -31,13 +31,13 @@ def test_recommendations():
             data = response.json()
             tokens.append(data['access_token'])
             user_ids.append(data['user']['id'])
-            print(f"   注册用户: {user_data['username']} - 成功")
+            print(f"   Registered user: {user_data['username']} - Success")
         else:
-            print(f"   注册用户: {user_data['username']} - 失败: {response.text}")
+            print(f"   Registered user: {user_data['username']} - Failed: {response.text}")
             return
     
-    # 2. 为每个用户添加一些歌曲日志
-    print("\n2. 添加歌曲日志...")
+    # 2. Add song logs for each user
+    print("\n2. Adding song logs...")
     songs_data = [
         {"song_title": "Chill Song 1", "artist": "Chill Artist", "mood": "chill"},
         {"song_title": "Energetic Song 1", "artist": "Energetic Artist", "mood": "energetic"},
@@ -53,12 +53,12 @@ def test_recommendations():
                 headers={"Authorization": f"Bearer {token}"}
             )
             if response.status_code == 201:
-                print(f"   用户 {i+1} 添加歌曲: {song['song_title']} - 成功")
+                print(f"   User {i+1} added song: {song['song_title']} - Success")
             else:
-                print(f"   用户 {i+1} 添加歌曲: {song['song_title']} - 失败: {response.text}")
+                print(f"   User {i+1} added song: {song['song_title']} - Failed: {response.text}")
     
-    # 3. 测试朋友推荐API
-    print("\n3. 测试朋友推荐API...")
+    # 3. Test friend recommendations API
+    print("\n3. Testing friend recommendations API...")
     response = requests.get(
         f"{BASE_URL}/users/recommendations/friends",
         headers={"Authorization": f"Bearer {tokens[0]}"}
@@ -66,29 +66,29 @@ def test_recommendations():
     
     if response.status_code == 200:
         data = response.json()
-        print(f"   推荐API调用成功")
-        print(f"   推荐数量: {data.get('total', 0)}")
-        print(f"   推荐列表:")
+        print(f"   Recommendations API call successful")
+        print(f"   Number of recommendations: {data.get('total', 0)}")
+        print(f"   Recommendations list:")
         for i, rec in enumerate(data.get('recommendations', [])):
             print(f"     {i+1}. {rec['user']['username']} - {rec['rationale']}")
     else:
-        print(f"   推荐API调用失败: {response.status_code} - {response.text}")
+        print(f"   Recommendations API call failed: {response.status_code} - {response.text}")
     
-    # 4. 测试关注功能
-    print("\n4. 测试关注功能...")
+    # 4. Test follow functionality
+    print("\n4. Testing follow functionality...")
     if len(tokens) >= 2:
-        # 用户1关注用户2
+        # User 1 follows user 2
         response = requests.patch(
             f"{BASE_URL}/users/{user_ids[1]}/follow",
             headers={"Authorization": f"Bearer {tokens[0]}"}
         )
         if response.status_code == 200:
-            print(f"   用户1关注用户2 - 成功")
+            print(f"   User 1 followed user 2 - Success")
         else:
-            print(f"   用户1关注用户2 - 失败: {response.text}")
+            print(f"   User 1 followed user 2 - Failed: {response.text}")
     
-    # 5. 再次测试推荐API（应该排除已关注的用户）
-    print("\n5. 再次测试推荐API（排除已关注用户）...")
+    # 5. Test recommendations API again (should exclude already followed users)
+    print("\n5. Testing recommendations API again (excluding followed users)...")
     response = requests.get(
         f"{BASE_URL}/users/recommendations/friends",
         headers={"Authorization": f"Bearer {tokens[0]}"}
@@ -96,22 +96,22 @@ def test_recommendations():
     
     if response.status_code == 200:
         data = response.json()
-        print(f"   推荐API调用成功")
-        print(f"   推荐数量: {data.get('total', 0)}")
-        print(f"   推荐列表:")
+        print(f"   Recommendations API call successful")
+        print(f"   Number of recommendations: {data.get('total', 0)}")
+        print(f"   Recommendations list:")
         for i, rec in enumerate(data.get('recommendations', [])):
             print(f"     {i+1}. {rec['user']['username']} - {rec['rationale']}")
     else:
-        print(f"   推荐API调用失败: {response.status_code} - {response.text}")
+        print(f"   Recommendations API call failed: {response.status_code} - {response.text}")
     
-    print("\n测试完成!")
+    print("\nTest completed!")
 
 if __name__ == "__main__":
     try:
         test_recommendations()
     except requests.exceptions.ConnectionError:
-        print("错误: 无法连接到后端服务器。请确保后端服务器正在运行在 http://localhost:5001")
+        print("Error: Cannot connect to backend server. Please ensure the backend server is running at http://localhost:5001")
         sys.exit(1)
     except Exception as e:
-        print(f"测试过程中发生错误: {e}")
+        print(f"Error occurred during testing: {e}")
         sys.exit(1) 
