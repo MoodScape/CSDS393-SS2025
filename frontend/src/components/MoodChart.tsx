@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Chart, registerables } from "chart.js";
 import { API_BASE_URL } from "../api";
 
@@ -20,22 +20,7 @@ const MoodChart: React.FC = () => {
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart | null>(null);
 
-  useEffect(() => {
-    fetchMoodData();
-  }, [selectedRange]);
-
-  useEffect(() => {
-    if (moodData && chartRef.current) {
-      createChart();
-    }
-    return () => {
-      if (chartInstance.current) {
-        chartInstance.current.destroy();
-      }
-    };
-  }, [moodData]);
-
-  const fetchMoodData = async () => {
+  const fetchMoodData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -67,9 +52,9 @@ const MoodChart: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedRange]);
 
-  const createChart = () => {
+  const createChart = useCallback(() => {
     if (!chartRef.current || !moodData) return;
 
     if (chartInstance.current) {
@@ -146,7 +131,22 @@ const MoodChart: React.FC = () => {
         },
       },
     });
-  };
+  }, [moodData, selectedRange]);
+
+  useEffect(() => {
+    fetchMoodData();
+  }, [selectedRange]);
+
+  useEffect(() => {
+    if (moodData && chartRef.current) {
+      createChart();
+    }
+    return () => {
+      if (chartInstance.current) {
+        chartInstance.current.destroy();
+      }
+    };
+  }, [moodData]);
 
   const handleRangeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedRange(event.target.value as RangeOption);
