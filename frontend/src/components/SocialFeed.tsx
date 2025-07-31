@@ -17,6 +17,7 @@ const SocialFeed: React.FC = () => {
   }, []);
 
   const fetchRecommendations = async () => {
+    const token = sessionStorage.getItem('access_token');
     try {
       const response = await fetch(`${API_BASE_URL}/recommendations`, {
         headers: {
