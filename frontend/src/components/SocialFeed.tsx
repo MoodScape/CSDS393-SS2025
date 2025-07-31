@@ -55,8 +55,8 @@ const SocialFeed: React.FC = () => {
       <p className="subtitle">Songs your friends are listening to</p>
       
       <div className="recommendations-list">
-        {recommendations.map((rec, index) => (
-          <div key={index} className="recommendation-card">
+        {recommendations.map((rec) => (
+          <div key={`${rec.song_title}-${rec.artist}`} className="recommendation-card">
             <div className="song-info">
               <h3>{rec.song_title}</h3>
               <p className="artist">by {rec.artist}</p>
