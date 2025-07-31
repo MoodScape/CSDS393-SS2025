@@ -202,18 +202,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
         {activeTab === 'Log a Song' && (
           <LogSong onSongLogged={handleSongLogged} />
         )}
-        {activeTab === 'Social Feed' && (
-          <div className="social-feed-section">
-            <h2>Social Feed</h2>
-            <div className="search-section">
-              <h3>Search Users</h3>
-              <UserSearch />
-            </div>
-            <div className="feed-placeholder">
-              <p>Coming soon! Here you'll see updates from users you follow.</p>
-            </div>
-          </div>
-        )}
+ {activeTab === 'Social Feed' && <SocialFeed />}
       </main>
     </div>
   );
