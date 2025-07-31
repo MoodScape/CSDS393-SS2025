@@ -135,7 +135,7 @@ const MoodChart: React.FC = () => {
 
   useEffect(() => {
     fetchMoodData();
-  }, [selectedRange]);
+  }, [fetchMoodData]);
 
   useEffect(() => {
     if (moodData && chartRef.current) {
@@ -146,7 +146,7 @@ const MoodChart: React.FC = () => {
         chartInstance.current.destroy();
       }
     };
-  }, [moodData]);
+  }, [createChart, moodData]);
 
   const handleRangeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedRange(event.target.value as RangeOption);
