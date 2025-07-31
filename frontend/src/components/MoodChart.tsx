@@ -100,7 +100,7 @@ const MoodChart: React.FC = () => {
         labels: moods,
         datasets: [
           {
-            label: "Mood Count",
+            label: "Count",
             data: counts,
             backgroundColor: colors.slice(0, moods.length),
             borderColor: colors.slice(0, moods.length),
