@@ -179,8 +179,8 @@ const MoodChart: React.FC = () => {
       <div className="mood-chart-container">
         <div className="mood-chart-header">
           <h2>Mood Trends</h2>
-          <select 
-            value={selectedRange} 
+          <select
+            value={selectedRange}
             onChange={handleRangeChange}
             className="range-selector"
           >
@@ -190,8 +190,8 @@ const MoodChart: React.FC = () => {
           </select>
         </div>
         <div className="no-data">
-          No mood data available for the selected time period. 
-          Start logging some songs to see your mood trends!
+          No mood data available for the selected time period. Start logging
+          some songs to see your mood trends!
         </div>
       </div>
     );
@@ -201,8 +201,8 @@ const MoodChart: React.FC = () => {
     <div className="mood-chart-container">
       <div className="mood-chart-header">
         <h2>Mood Trends</h2>
-        <select 
-          value={selectedRange} 
+        <select
+          value={selectedRange}
           onChange={handleRangeChange}
           className="range-selector"
         >
@@ -215,14 +215,12 @@ const MoodChart: React.FC = () => {
         <canvas ref={chartRef} />
       </div>
       <div className="chart-summary">
-        <p>Total songs logged: <strong>{moodData.total_entries}</strong></p>
+        <p>
+          Total songs logged: <strong>{moodData.total_entries}</strong>
+        </p>
       </div>
     </div>
   );
-
-
-
 };
-
 
 export default MoodChart;
