@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import LogSong from './LogSong';
+import UserSearch from './UserSearch';
 import { API_BASE_URL } from '../api';
 import './Dashboard.css';
 
@@ -201,9 +202,15 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
           <LogSong onSongLogged={handleSongLogged} />
         )}
         {activeTab === 'Social Feed' && (
-          <div className="placeholder-feed">
+          <div className="social-feed-section">
             <h2>Social Feed</h2>
-            <p>Coming soon! Here you'll see updates from users you follow.</p>
+            <div className="search-section">
+              <h3>Search Users</h3>
+              <UserSearch />
+            </div>
+            <div className="feed-placeholder">
+              <p>Coming soon! Here you'll see updates from users you follow.</p>
+            </div>
           </div>
         )}
       </main>
