@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import LogSong from './LogSong';
+import SocialFeed from './SocialFeed';
 import FriendRecommendations from './FriendRecommendations';
 import UserSearch from './UserSearch';
 import { API_BASE_URL } from '../api';
@@ -220,8 +221,12 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
               <h3>Search Users</h3>
               <UserSearch />
             </div>
-            <div className="feed-placeholder">
-              <p>Coming soon! Here you'll see updates from users you follow.</p>
+            <div className="recommendations-section" style={{ marginTop: '2rem' }}>
+              <h3>Song Recommendations</h3>
+              <p style={{ color: '#666', marginBottom: '1rem' }}>
+                Discover songs your friends are listening to that you haven't logged yet
+              </p>
+              <SocialFeed />
             </div>
           </div>
         )}
