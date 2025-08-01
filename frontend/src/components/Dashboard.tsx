@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import LogSong from './LogSong';
+import FriendRecommendations from './FriendRecommendations';
 import UserSearch from './UserSearch';
 import { API_BASE_URL } from '../api';
 import './Dashboard.css';
@@ -25,7 +26,7 @@ interface DashboardProps {
   onLogout: () => void;
 }
 
-const SIDEBAR_OPTIONS = ['Dashboard', 'Log a Song', 'Social Feed'] as const;
+const SIDEBAR_OPTIONS = ['Dashboard', 'Log a Song', 'Friend Recommendations', 'Social Feed'] as const;
 type SidebarOption = typeof SIDEBAR_OPTIONS[number];
 
 const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
@@ -92,6 +93,10 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
   const handleSongLogged = () => {
     setActiveTab('Dashboard');
     fetchSongLogs();
+    fetchUserProfile();
+  };
+
+  const handleFollowChange = () => {
     fetchUserProfile();
   };
 
@@ -200,6 +205,9 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
         )}
         {activeTab === 'Log a Song' && (
           <LogSong onSongLogged={handleSongLogged} />
+        )}
+        {activeTab === 'Friend Recommendations' && (
+          <FriendRecommendations onFollowChange={handleFollowChange} />
         )}
         {activeTab === 'Social Feed' && (
           <div className="social-feed-section">

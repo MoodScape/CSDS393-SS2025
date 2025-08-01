@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models import User, SongLog
 from bson import ObjectId
+from datetime import datetime, timedelta
 
 users_bp = Blueprint('users', __name__)
 
@@ -153,5 +154,110 @@ def update_bio():
         user.bio = bio
         user.save()
         return jsonify({'message': 'Bio updated successfully', 'bio': user.bio}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@users_bp.route('/recommendations/friends', methods=['GET'])
+@jwt_required()
+def get_friend_recommendations():
+    try:
+        current_user_id = get_jwt_identity()
+        current_user = User.objects(id=current_user_id).first()
+        if not current_user:
+            return jsonify({'error': 'User not found'}), 404
+
+        # Get current user's music preferences (based on recent song logs)
+        recent_songs = SongLog.objects(user=current_user).order_by('-timestamp').limit(20)
+        user_moods = [song.mood for song in recent_songs]
+        user_artists = [song.artist for song in recent_songs]
+
+        # Exclude already followed users and current user
+        excluded_users = current_user.following + [current_user_id]
+        
+        # Recommendations based on common music preferences
+        mood_based_recommendations = []
+        if user_moods:
+            # Find users with similar mood preferences
+            similar_users = SongLog.objects(
+                mood__in=user_moods,
+                user__nin=[ObjectId(uid) for uid in excluded_users]
+            ).aggregate([
+                {'$group': {
+                    '_id': '$user',
+                    'common_moods': {'$addToSet': '$mood'},
+                    'song_count': {'$sum': 1}
+                }},
+                {'$sort': {'song_count': -1}},
+                {'$limit': 10}
+            ])
+            
+            for user_data in similar_users:
+                user = User.objects(id=user_data['_id']).first()
+                if user:
+                    common_moods = set(user_data['common_moods']) & set(user_moods)
+                    mood_based_recommendations.append({
+                        'user': {
+                            'id': str(user.id),
+                            'username': user.username,
+                            'bio': user.bio
+                        },
+                        'rationale': f"Both like {', '.join(common_moods)} mood music",
+                        'score': len(common_moods) * user_data['song_count']
+                    })
+
+        # Recommendations based on "friends of friends"
+        friends_of_friends = []
+        if current_user.following:
+            # Get users followed by users that current user follows
+            following_users = User.objects(id__in=current_user.following)
+            for following_user in following_users:
+                for friend_id in following_user.following:
+                    if friend_id not in excluded_users and friend_id != current_user_id:
+                        friend = User.objects(id=friend_id).first()
+                        if friend:
+                            friends_of_friends.append({
+                                'user': {
+                                    'id': str(friend.id),
+                                    'username': friend.username,
+                                    'bio': friend.bio
+                                },
+                                'rationale': f"Followed by {following_user.username}",
+                                'score': 1
+                            })
+
+        # Merge recommendations and remove duplicates
+        all_recommendations = {}
+        
+        # Add mood-based recommendations
+        for rec in mood_based_recommendations:
+            user_id = rec['user']['id']
+            if user_id not in all_recommendations:
+                all_recommendations[user_id] = rec
+            else:
+                # If already exists, merge scores and rationales
+                all_recommendations[user_id]['score'] += rec['score']
+                all_recommendations[user_id]['rationale'] += f" | {rec['rationale']}"
+
+        # Add friends of friends recommendations
+        for rec in friends_of_friends:
+            user_id = rec['user']['id']
+            if user_id not in all_recommendations:
+                all_recommendations[user_id] = rec
+            else:
+                all_recommendations[user_id]['score'] += rec['score']
+                all_recommendations[user_id]['rationale'] += f" | {rec['rationale']}"
+
+        # Sort by score and limit results
+        sorted_recommendations = sorted(
+            all_recommendations.values(),
+            key=lambda x: x['score'],
+            reverse=True
+        )[:10]
+
+        return jsonify({
+            'recommendations': sorted_recommendations,
+            'total': len(sorted_recommendations)
+        }), 200
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500 
