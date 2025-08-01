@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import LogSong from './LogSong';
 import SocialFeed from './SocialFeed';
+import FriendRecommendations from './FriendRecommendations';
 import UserSearch from './UserSearch';
 import { API_BASE_URL } from '../api';
 import './Dashboard.css';
+import MoodChart from './MoodChart';
 
 interface User {
   id: string;
@@ -26,7 +28,7 @@ interface DashboardProps {
   onLogout: () => void;
 }
 
-const SIDEBAR_OPTIONS = ['Dashboard', 'Log a Song', 'Social Feed'] as const;
+const SIDEBAR_OPTIONS = ['Dashboard', 'Log a Song', 'Friend Recommendations', 'Social Feed'] as const;
 type SidebarOption = typeof SIDEBAR_OPTIONS[number];
 
 const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
@@ -93,6 +95,10 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
   const handleSongLogged = () => {
     setActiveTab('Dashboard');
     fetchSongLogs();
+    fetchUserProfile();
+  };
+
+  const handleFollowChange = () => {
     fetchUserProfile();
   };
 
@@ -174,6 +180,9 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
               <span><strong>{userProfile.follower_count ?? 0}</strong> Followers</span>
               <span><strong>{userProfile.following_count ?? 0}</strong> Following</span>
             </div>
+
+            <MoodChart />
+
             <h2>Recent Songs</h2>
             {loading ? (
               <div className="loading">Loading songs...</div>
@@ -201,6 +210,9 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
         )}
         {activeTab === 'Log a Song' && (
           <LogSong onSongLogged={handleSongLogged} />
+        )}
+        {activeTab === 'Friend Recommendations' && (
+          <FriendRecommendations onFollowChange={handleFollowChange} />
         )}
         {activeTab === 'Social Feed' && (
           <div className="social-feed-section">
