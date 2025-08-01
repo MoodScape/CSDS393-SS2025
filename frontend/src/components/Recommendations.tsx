@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { API_BASE_URL } from '../api';
-import './SocialFeed.css';
+import './Recommendations.css';
 
 interface Recommendation {
   song_title: string;
@@ -8,7 +8,7 @@ interface Recommendation {
   friends: string[];
 }
 
-const SocialFeed: React.FC = () => {
+const Recommendations: React.FC = () => {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -71,4 +71,4 @@ const SocialFeed: React.FC = () => {
   );
 };
 
-export default SocialFeed;
+export default Recommendations;

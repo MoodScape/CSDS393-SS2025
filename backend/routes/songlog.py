@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models import SongLog, User
 from datetime import datetime
+from bson import ObjectId
 
 songlog_bp = Blueprint('songlog', __name__)
 
@@ -59,4 +60,36 @@ def get_my_songlogs():
             } for log in songlogs
         ]), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 500 
+        return jsonify({'error': str(e)}), 500
+
+@songlog_bp.route('/feed', methods=['GET'])
+@jwt_required()
+def get_feed():
+    """Get song logs from followed users, most recent first"""
+    try:
+        user_id = get_jwt_identity()
+        user = User.objects(id=user_id).first()
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        # Get list of users the current user is following
+        following_ids = [ObjectId(uid) for uid in user.following if ObjectId.is_valid(uid)]
+        
+        if not following_ids:
+            return jsonify([]), 200
+
+        # Get recent song logs from followed users
+        feed_logs = SongLog.objects(user__in=following_ids).order_by('-timestamp').limit(50)
+        
+        return jsonify([
+            {
+                'id': str(log.id),
+                'username': log.user.username,
+                'song_title': log.song_title,
+                'artist': log.artist,
+                'mood': log.mood,
+                'timestamp': log.timestamp.isoformat()
+            } for log in feed_logs
+        ]), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
