@@ -4,6 +4,7 @@ import FriendRecommendations from './FriendRecommendations';
 import UserSearch from './UserSearch';
 import { API_BASE_URL } from '../api';
 import './Dashboard.css';
+import MoodChart from './MoodChart';
 
 interface User {
   id: string;
@@ -178,6 +179,9 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
               <span><strong>{userProfile.follower_count ?? 0}</strong> Followers</span>
               <span><strong>{userProfile.following_count ?? 0}</strong> Following</span>
             </div>
+
+            <MoodChart />
+
             <h2>Recent Songs</h2>
             {loading ? (
               <div className="loading">Loading songs...</div>
