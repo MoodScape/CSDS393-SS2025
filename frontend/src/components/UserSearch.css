@@ -1,0 +1,174 @@
+.user-search-container {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.search-input-container {
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #dbdbdb;
+  border-radius: 8px;
+  font-size: 16px;
+  background: #fafafa;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #0095f6;
+  box-shadow: 0 0 0 1px rgba(0, 149, 246, 0.1);
+  background: white;
+}
+
+.search-loading {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #8e8e93;
+  font-size: 12px;
+}
+
+.search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #dbdbdb;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 1000;
+  margin-top: 4px;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-bottom: 1px solid #fafafa;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item:hover {
+  background-color: #fafafa;
+}
+
+.user-info {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 0;
+}
+
+.user-search-container .search-result-item .user-info .username {
+  font-weight: 600;
+  color: #262626;
+  margin-bottom: 2px;
+  font-size: 14px ;
+  line-height: 1.2;
+}
+
+.user-bio {
+  color: #8e8e93;
+  font-size: 12px;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.user-stats {
+  color: #8e8e93;
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.follow-btn {
+  padding: 5px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 60px;
+  margin-left: 12px;
+  font-family: inherit;
+}
+
+.follow-btn.follow {
+  background: #0095f6;
+  color: white;
+}
+
+.follow-btn.follow:hover {
+  background: #0081d6;
+}
+
+.follow-btn.following {
+  background: transparent;
+  color: #262626;
+  border: 1px solid #dbdbdb;
+}
+
+.follow-btn.following:hover {
+  background: #fafafa;
+  border-color: #c7c7c7;
+}
+
+.follow-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.no-results {
+  padding: 16px;
+  text-align: center;
+  color: #8e8e93;
+  font-style: italic;
+  font-size: 14px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .user-search-container {
+    max-width: 100%;
+  }
+  
+  .search-result-item {
+    padding: 6px 12px;
+  }
+  
+  .follow-btn {
+    padding: 4px 10px;
+    font-size: 11px;
+    min-width: 55px;
+  }
+  
+  .user-search-container .search-result-item .user-info .username {
+    font-size: 12px ;
+  }
+  
+  .user-bio {
+    font-size: 11px;
+  }
+  
+  .user-stats {
+    font-size: 10px;
+  }
+} 

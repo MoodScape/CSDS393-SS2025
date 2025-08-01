@@ -6,6 +6,41 @@ from datetime import datetime, timedelta
 
 users_bp = Blueprint('users', __name__)
 
+@users_bp.route('/search', methods=['GET'])
+@jwt_required()
+def search_users():
+    """Search users by username with case-insensitive partial matching"""
+    try:
+        current_user_id = get_jwt_identity()
+        query = request.args.get('q', '').strip()
+        
+        if not query:
+            return jsonify([]), 200
+        
+        # Case-insensitive partial match using regex
+        users = User.objects(username__icontains=query).limit(10)
+        
+        current_user = User.objects(id=current_user_id).first()
+        current_user_following = current_user.following if current_user else []
+        
+        results = []
+        for user in users:
+            # We don't want to show the current user in the search results
+            if str(user.id) != current_user_id:
+                results.append({
+                    'id': str(user.id),
+                    'username': user.username,
+                    'bio': user.bio,
+                    'follower_count': len(user.followers),
+                    'following_count': len(user.following),
+                    'is_following': str(user.id) in current_user_following
+                })
+        
+        return jsonify(results), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @users_bp.route('/<user_id>/public-profile', methods=['GET'])
 @jwt_required()
 def get_public_profile(user_id):
