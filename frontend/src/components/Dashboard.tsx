@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import LogSong from './LogSong';
-import SocialFeed from './SocialFeed';
+import Recommendations from './Recommendations';
 import FriendRecommendations from './FriendRecommendations';
 import UserSearch from './UserSearch';
+import Feed from './Feed';
 import { API_BASE_URL } from '../api';
 import './Dashboard.css';
 import MoodChart from './MoodChart';
@@ -28,7 +29,7 @@ interface DashboardProps {
   onLogout: () => void;
 }
 
-const SIDEBAR_OPTIONS = ['Dashboard', 'Log a Song', 'Friend Recommendations', 'Social Feed'] as const;
+const SIDEBAR_OPTIONS = ['Dashboard', 'Social Feed', 'Log a Song', 'Song Recommendations', 'Friend Recommendations'] as const;
 type SidebarOption = typeof SIDEBAR_OPTIONS[number];
 
 const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
@@ -222,14 +223,14 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
               <UserSearch />
             </div>
             <div className="recommendations-section" style={{ marginTop: '2rem' }}>
-              <h3>Song Recommendations</h3>
-              <p style={{ color: '#666', marginBottom: '1rem' }}>
-                Discover songs your friends are listening to that you haven't logged yet
-              </p>
-              <SocialFeed />
+              <Feed />
             </div>
           </div>
         )}
+        {activeTab === 'Song Recommendations' && (
+          <Recommendations />
+        )}
+       
       </main>
     </div>
   );
